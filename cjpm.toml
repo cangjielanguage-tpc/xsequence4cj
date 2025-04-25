@@ -1,9 +1,8 @@
 [dependencies]
 
-
 [package]
   cjc-version = "0.59.6"
-  compile-option = ""
+  compile-option = "-O2"
   description = "nothing here"
   link-option = ""
   name = "xsequence4cj"
@@ -13,3 +12,4 @@
   target-dir = ""
   version = "1.0.0"
   package-configuration = {}
+
