@@ -22,3 +22,5 @@ report
 tmp
 ci_test/
 test_temp/
+build-script-cache/
+cjcov_logs/
