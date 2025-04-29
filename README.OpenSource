@@ -1,0 +1,11 @@
+[
+    {
+        "Name": "xsequence",
+        "License": "Apache-2.0",
+        "License File": " LICENSE ", 
+        "Owner": "xuan698400"
+        "Upstream URL": "https://gitee.com/xuan698400/xsequence",
+        "Version Number": " master ",
+        "Description": "Distributed serial number generation component"
+    }
+]
