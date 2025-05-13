@@ -9,7 +9,7 @@ main(): Int64 {
     try {
         MyClass.judgmentNum("")
     }catch(e: SeqException) {
-        if(!e.toString().contains("SqlException: errorCode: 0")) {
+        if(!e.toString().contains("Exception")) {
             return -1
         }
     }

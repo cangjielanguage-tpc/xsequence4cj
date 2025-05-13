@@ -4,8 +4,7 @@
 
 package xsequence4cj
 
-public class SeqException <: SqlException {
-
+public class SeqException <: Exception {
     public init() {
         super()
     }
@@ -14,8 +13,11 @@ public class SeqException <: SqlException {
         super(message)
     }
 
-    public init(message: String, sqlState: String, errorCode: Int64) {
-        super(message, sqlState, errorCode)
+    public override func toString(): String {
+        if (message == "") {
+            return "SeqException"
+        } else {
+            return "SeqException: ${message}"
+        }
     }
-
 }

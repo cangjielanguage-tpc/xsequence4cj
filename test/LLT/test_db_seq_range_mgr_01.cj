@@ -24,7 +24,7 @@ main(): Int64 {
     try {
         dbSeqRangeMgr.setTableName("")
     }catch(e: SeqException){
-        if(!e.toString().contains("SqlException: [DbSeqRangeMgr-setTableName] tableName is empty., errorCode: 0")) {
+        if(!e.toString().contains("SeqException: [DbSeqRangeMgr-setTableName] tableName is empty.")) {
             return -1
         }
     }
