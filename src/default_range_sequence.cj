@@ -11,7 +11,7 @@ public class DefaultRangeSequence <: RangeSequence {
     /**
      * 获取区间是加一把独占锁防止资源冲突
      */
-    private let lock: IReentrantMutex = ReentrantMutex()
+    private let lock: Mutex = Mutex()
      /**
      * 序列号区间管理器
      */
