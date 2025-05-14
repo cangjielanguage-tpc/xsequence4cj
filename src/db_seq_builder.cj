@@ -23,15 +23,15 @@ public class DbSeqBuilder <: SeqBuilder {
     /**
      * 并发时数据使用了乐观策略，这个是失败重试的次数[可选：默认：100]
      */
-    private var retrytimes = 100
+    private var retrytimes: Int32 = 100
     /**
      * 获取range步长[可选：默认：1000]
      */
-    private var steps = 1000
+    private var steps: Int32 = 1000
     /**
      * 序列号分配起始值[可选：默认：0]
      */
-    private var stepstart = 0
+    private var stepstart: Int64 = 0
 
     public init(){}
 
@@ -45,12 +45,12 @@ public class DbSeqBuilder <: SeqBuilder {
         return this
     }
 
-    public func retryTimes(retryTimes: Int64): DbSeqBuilder {
+    public func retryTimes(retryTimes: Int32): DbSeqBuilder {
         this.retrytimes = retryTimes
         return this
     }
 
-    public func step(step: Int64): DbSeqBuilder {
+    public func step(step: Int32): DbSeqBuilder {
         this.steps = step
         return this
     }

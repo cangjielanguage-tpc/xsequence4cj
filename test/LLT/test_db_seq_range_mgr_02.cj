@@ -27,7 +27,7 @@ main(): Int64 {
     try {
         dbSeqRangeMgr.create()
     }catch(e: SeqException) {
-        if(!e.toString().contains("SqlException: [DbSeqRangeMgr-checkParam] step must greater than 0., errorCode: 0")){
+        if(!e.toString().contains("SeqException: [DbSeqRangeMgr-checkParam] step must greater than 0.")){
             return -1
         }
     }

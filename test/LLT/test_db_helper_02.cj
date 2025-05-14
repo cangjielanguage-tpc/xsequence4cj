@@ -22,8 +22,8 @@ main(): Int64 {
     println( )
     try {
         DbHelper.selectRange(mysqlDatasource, "myTableName_helper2", "lihao111", 55)
-    }catch(e: SqlException) {
-        if(!e.toString().contains("SqlException: Sequence value cannot be less than zero, value = -11, please check table sequence myTableName_helper2, errorCode: 0")) {
+    }catch(e: SeqException) {
+        if(!e.toString().contains("SeqException: Sequence value cannot be less than zero, value = -11, please check table sequence myTableName_helper2")) {
             return -1
         }
     }

@@ -18,7 +18,7 @@ public class DbSeqRangeMgr <: SeqRangeMgr {
     /**
      * 区间步长
      */
-    private var step: Int64 = 1000
+    private var step: Int32 = 1000
 
     /**
      * 区间起始位置，真实从stepStart+1开始
@@ -28,7 +28,7 @@ public class DbSeqRangeMgr <: SeqRangeMgr {
     /**
      * 获取区间失败重试次数
      */
-    private var retryTimes: Int64 = 100
+    private var retryTimes: Int32 = 100
 
     /**
      * DB来源
@@ -93,11 +93,11 @@ public class DbSeqRangeMgr <: SeqRangeMgr {
         }
     }
 
-    public func getStep(): Int64 {
+    public func getStep(): Int32 {
         return step
     }
 
-    public func setStep(step: Int64): Unit {
+    public func setStep(step: Int32): Unit {
         this.step = step
     }
 
@@ -109,11 +109,11 @@ public class DbSeqRangeMgr <: SeqRangeMgr {
         this.stepStart = stepStart
     }
 
-    public func getRetryTimes(): Int64 {
+    public func getRetryTimes(): Int32 {
         return retryTimes
     }
 
-    public func setRetryTimes(retryTimes: Int64): Unit {
+    public func setRetryTimes(retryTimes: Int32): Unit {
         this.retryTimes = retryTimes
     }
 

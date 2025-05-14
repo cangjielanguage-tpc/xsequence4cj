@@ -19,11 +19,10 @@ main(): Int64 {
     DbHelper.createTable(mysqlDatasource, "myTableName_helper3")
     DbHelper.insertRange(mysqlDatasource, "myTableName_helper3", "lihao111", Int64.Max - 100000000 + 30)
 
-    println( )
     try {
         DbHelper.selectRange(mysqlDatasource, "myTableName_helper3", "lihao111", 55)
-    }catch(e: SqlException) {
-        if(!e.toString().contains("SqlException: Sequence value overflow, value = 9223372036754775837 please check table sequence myTableName_helper3, errorCode: 0")) {
+    }catch(e: SeqException) {
+        if(!e.toString().contains("SeqException: Sequence value overflow, value = 9223372036754775837 please check table sequence myTableName_helper3")) {
             return -1
         }
     }
