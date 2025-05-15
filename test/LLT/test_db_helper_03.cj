@@ -3,6 +3,7 @@
 import mysqlclient_ffi.*
 import std.database.sql.*
 import std.time.*
+import std.math.*
 import xsequence4cj.*
 
 main(): Int64 {

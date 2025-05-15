@@ -7,6 +7,7 @@ package xsequence4cj
 internal import std.database.sql.*
 internal import std.time.*
 internal import std.sync.*
+internal import std.math.*
 
 extend<T> Option<T> {
     operator func()(): T {
