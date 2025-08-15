@@ -49,8 +49,12 @@ public class DbHelper {
      */
     public static func insertRange(dataSource: Datasource, tableName: String, name: String, stepStart: Int64): Unit {
         let conn = dataSource.connect()
-        var stmt = conn.prepareStatement(SQL_INSERT_RANGE.replace("#tableName", tableName))   
-        stmt.update([SqlVarchar(name), SqlBigInt(stepStart), SqlTimestamp(DateTime.now()), SqlTimestamp(DateTime.now())])
+        var stmt = conn.prepareStatement(SQL_INSERT_RANGE.replace("#tableName", tableName)) 
+        stmt.set<String>(0, name)
+        stmt.set<Int64>(1, stepStart)
+        stmt.set<DateTime>(2, DateTime.now())
+        stmt.set<DateTime>(3, DateTime.now())
+        stmt.update()
     
         stmt.close()
         conn.close()
@@ -70,7 +74,13 @@ public class DbHelper {
     public static func updateRange(dataSource: Datasource, tableName: String, newValue: Int64, oldValue: Int64, name: String): Bool {
         let conn = dataSource.connect()
         var stmt = conn.prepareStatement(SQL_UPDATE_RANGE.replace("#tableName", tableName))   
-        var updateResult = stmt.update([SqlBigInt(newValue), SqlTimestamp(DateTime.now()), SqlVarchar(name), SqlBigInt(oldValue)])
+
+        stmt.set<Int64>(0, newValue)
+        stmt.set<DateTime>(1, DateTime.now())
+        stmt.set<String>(2, name)
+        stmt.set<Int64>(3, oldValue)
+
+        var updateResult = stmt.update()
         let affectedRows: Int64 = updateResult.rowCount
 
         if(affectedRows > 0) {  
@@ -97,19 +107,15 @@ public class DbHelper {
         let conn = dataSource.connect()
         var stmt = conn.prepareStatement(SQL_SELECT_RANGE.replace("#tableName", tableName))   
         
-        let names = SqlVarchar(name)
+        stmt.set<String>(0, name)
+        let queryResult = stmt.query()
 
-        var s: SqlBigInt = SqlBigInt(0)
-        var arr: Array<SqlDbType> = [s]
-        
-        var queryResult = stmt.query([names])
-        if(!queryResult.next(arr)) {
+        if(!queryResult.next()) {
             //没有此类型数据，需要初始化
             insertRange(dataSource, tableName, name, stepStart)   
             return stepStart 
         }  
-       
-        oldValue = (arr[0] as SqlBigInt).getOrThrow().value
+        oldValue = queryResult.get<Int64>(0)
 
         if (oldValue < 0) {
             let msg: String = "Sequence value cannot be less than zero, value = ${oldValue}, please check table sequence ${tableName}"
