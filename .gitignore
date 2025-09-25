@@ -24,3 +24,4 @@ ci_test/
 test_temp/
 build-script-cache/
 cjcov_logs/
+log.txt

@@ -31,8 +31,8 @@ public class TestDbSeqBuilder03 {
         dbsbr.bizName("range001")
         dbsbr.stepStart(Int64.Max) //问题,入参类型需是Int32
         var sq=dbsbr.build()
-        let e:OverflowException=@AssertThrows[OverflowException](sq.nextValue())
-        @Assert(e.toString().contains("OverflowException"),true)
+        let e:SeqException=@AssertThrows[SeqException](sq.nextValue())
+        @Assert(e.toString().contains("Sequence value overflow"),true)
         clearDown("sequence")
     }
     @TestCase

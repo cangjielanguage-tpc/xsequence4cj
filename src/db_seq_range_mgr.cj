@@ -49,7 +49,7 @@ public class DbSeqRangeMgr <: SeqRangeMgr {
 
         for (_ in 0..getRetryTimes()) {
             if(let Some(dataSource) <- getDataSource()) {
-                oldValue = DbHelper.selectRange(dataSource, getRealTableName(), name, getStepStart())
+                oldValue = DbHelper.selectRange(dataSource, getRealTableName(), name, getStepStart()) ?? continue
                 newValue = oldValue + Int64(getStep())
                 if (DbHelper.updateRange(dataSource, getRealTableName(), newValue, oldValue, name)) {
                     return SeqRange(oldValue + 1, newValue)
