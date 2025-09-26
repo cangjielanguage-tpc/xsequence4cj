@@ -15,7 +15,7 @@ main(): Int64 {
         "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
         arr  
     )
-
+    dropTable(mysqlDatasource, "my1TableName")
     DbHelper.createTable(mysqlDatasource, "my1TableName")
     DbHelper.insertRange(mysqlDatasource, "my1TableName", "lihao111", 11)
     DbHelper.insertRange(mysqlDatasource, "my1TableName", "lihao222", 22)
@@ -29,4 +29,13 @@ main(): Int64 {
     }
 
     return 0
+}
+
+func dropTable(mysqlDatasource: MysqlDatasource, tableName: String): Unit {
+    var SQL_DELETE_TABLE: String = "DROP TABLE IF EXISTS #tableName"
+    let conn = mysqlDatasource.connect()
+    var stmt = conn.prepareStatement(SQL_DELETE_TABLE.replace("#tableName", tableName))
+    stmt.update()
+    stmt.close()
+    conn.close()
 }
