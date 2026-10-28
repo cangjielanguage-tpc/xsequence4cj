@@ -24,7 +24,11 @@ public class SeqRange {
     /**
      * 区间的序列号是否分配完毕，每次分配完毕就会去重新获取一个新的区间
      */
-    private var over: Bool = false
+    private var over: AtomicBool = AtomicBool(false)
+    /**
+     * 记录 Int64.Max 已经发放，避免 setOver(false) 后重复发放边界值。
+     */
+    private var maxValueIssued: AtomicBool = AtomicBool(false)
 
     public init(min: Int64, max: Int64) {
         this.min = min
@@ -33,18 +37,37 @@ public class SeqRange {
     }
 
     /**
-     * 返回并递增下一个序列号
-     *
-     * @return 下一个序列号，如果返回-1表示序列号分配完毕
+     * 返回并递增下一个序列号；None 表示区间已耗尽。
      */
-    public func getAndIncrement(): Int64 {
-        let currentValue: Int64 = value.fetchAdd(1)
-        if (currentValue > max) {
-            over = true
-            return -1
+    public func tryGetAndIncrement(): ?Int64 {
+        var currentValue = value.load()
+        while (!over.load() && currentValue <= max) {
+            if (currentValue == Int64.Max) {
+                over.store(true)
+                if (maxValueIssued.compareAndSwap(false, true)) {
+                    return Some(currentValue)
+                }
+                return None
+            }
+
+            if (value.compareAndSwap(currentValue, currentValue + 1)) {
+                return Some(currentValue)
+            }
+            currentValue = value.load()
         }
 
-        return currentValue
+        over.store(true)
+        return None
+    }
+
+    /**
+     * 兼容旧接口：返回下一个序列号；区间耗尽时返回 -1。
+     */
+    public func getAndIncrement(): Int64 {
+        if (let Some(currentValue) <- tryGetAndIncrement()) {
+            return currentValue
+        }
+        return -1
     }
 
     public func getMin(): Int64 {
@@ -56,11 +79,11 @@ public class SeqRange {
     }
 
     public func isOver(): Bool {
-        return over
+        return over.load()
     }
 
     public func setOver(over: Bool): Unit {
-        this.over = over
+        this.over.store(over || maxValueIssued.load())
     }
 
     public func toString(): String {
