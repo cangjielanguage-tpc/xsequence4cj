@@ -48,7 +48,7 @@ public class TestSeqRange01 {
         @Assert(sr.isOver(),true)
         sr.setOver(false)
         @Assert(sr.isOver(),false)
-        @Assert(sr.toString(),"max: 11, min: ${Int64.Max}, value: ${Int64.Min}")
+        @Assert(sr.toString(),"max: 11, min: ${Int64.Max}, value: ${Int64.Max}")
 
     }
     @TestCase
@@ -76,7 +76,7 @@ public class TestSeqRange01 {
         @Assert(sr.isOver(),true)
         sr.setOver(false)
         @Assert(sr.isOver(),false)
-        @Assert(sr.toString(),"max: ${Int64.Min}, min: 10, value: 11")
+        @Assert(sr.toString(),"max: ${Int64.Min}, min: 10, value: 10")
     }
     @TestCase
     func test_SeqRange_106(): Unit {
@@ -103,7 +103,7 @@ public class TestSeqRange01 {
         @Assert(sr.isOver(),true)
         sr.setOver(false)
         @Assert(sr.isOver(),false)
-        @Assert(sr.toString(),"max: 0, min: 10, value: 11")
+        @Assert(sr.toString(),"max: 0, min: 10, value: 10")
     }
     @TestCase
     func test_SeqRange_108(): Unit {

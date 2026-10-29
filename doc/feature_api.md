@@ -100,7 +100,14 @@ public class SeqRange {
     /**
      * 返回并递增下一个序列号
      *
-     * 返回值 Int64 - 下一个序列号，如果返回-1表示序列号分配完毕
+     * 返回值 ?Int64 - 下一个序列号；区间耗尽时返回 None
+     */
+    public func tryGetAndIncrement(): ?Int64
+
+    /**
+     * 兼容旧接口：返回并递增下一个序列号
+     *
+     * 返回值 Int64 - 下一个序列号；区间耗尽时返回 -1
      */
     public func getAndIncrement(): Int64 
 
@@ -141,6 +148,8 @@ public class SeqRange {
     public func toString(): String
 }
 ```
+
+注意：如果区间包含 -1，建议使用 `tryGetAndIncrement()`，以区分合法值和耗尽语义。
 
 #### 1.2.2 class DbSeqRangeMgr <: SeqRangeMgr
 
@@ -244,6 +253,8 @@ public class DbSeqRangeMgr <: SeqRangeMgr {
 #### 1.2.3 class DefaultRangeSequence <: RangeSequence
 
 序列号区间生成器接口默认实现
+
+DefaultRangeSequence 仅接受非负区间；区间耗尽后会在有限次数内刷新，超过次数抛出 SeqException。
 
 ```cangjie
 public class DefaultRangeSequence <: RangeSequence {
