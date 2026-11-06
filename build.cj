@@ -10,9 +10,14 @@ func getMysqlClientFfiPath(rootPath: String): Path {
     Path("${rootPath}/test/LLT/mysqlclient_ffi/windows")
 }
 
-@When[os == "Linux"]
+@When[os == "Linux" && arch == "x86_64"]
 func getMysqlClientFfiPath(rootPath: String): Path {
     Path("${rootPath}/test/LLT/mysqlclient_ffi/linux")
+}
+
+@When[os == "Linux" && arch == "aarch64"]
+func getMysqlClientFfiPath(rootPath: String): Path {
+    Path("${rootPath}/test/LLT/mysqlclient_ffi/linux-aarch64")
 }
 
 /*
