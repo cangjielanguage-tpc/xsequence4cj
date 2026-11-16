@@ -102,4 +102,16 @@ public class TestDbSeqRangeMgr03 {
         tableName="table01"
         clearDown(tableName)
     }
+
+    @TestCase
+    func test_DbSeqRangeMgr_305(): Unit {
+        var dsrm=DbSeqRangeMgr()
+        var ds=getDataSource()
+        dsrm.setDataSource(ds)
+        dsrm.create()
+        let e:SeqException=@AssertThrows[SeqException](dsrm.setStep(2000))
+        @Assert(e.toString(),"SeqException: Configuration cannot be changed after create().")
+        @Assert(dsrm.getStep(),1000)
+        clearDown("range")
+    }
 }

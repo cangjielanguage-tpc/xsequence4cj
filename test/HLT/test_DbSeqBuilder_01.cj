@@ -45,7 +45,7 @@ public class TestDbSeqBuilder01 {
         dbsbr.bizName("user00000000000000000000000000001")
         var sq=dbsbr.build()
         let e:SeqException=@AssertThrows[SeqException](sq.nextValue())
-        @Assert(e.toString(),"SeqException: Retried too many times, retryTimes = 100")
+        @Assert(e.toString(),"SeqException: [DbSeqRangeMgr-nextRange] name is too long, max length = 32.")
         clearDown("sequence")
     }
     @TestCase
@@ -85,11 +85,9 @@ public class TestDbSeqBuilder01 {
     func test_DbSeqBuilder_108(): Unit {
         var dbsbr=DbSeqBuilder()
         dbsbr.dataSource(getDataSource())
-        dbsbr.bizName("user00000000000000000000000000001")
-        dbsbr.retryTimes(49)
+        dbsbr.bizName("user0000000000000000000000000001")
         var sq=dbsbr.build()
-        let e:SeqException=@AssertThrows[SeqException](sq.nextValue())
-        @Assert(e.toString(),"SeqException: Retried too many times, retryTimes = 49")
+        @Assert(sq.nextValue(),1)
         clearDown("sequence")
     }
     @TestCase

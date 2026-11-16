@@ -46,7 +46,7 @@ public class TestDefaultRangeSequence02 {
         defaultRangeSequence.setName("user00000000000000000000000000001")  //这里指的是range名字
         defaultRangeSequence.setSeqRangeMgr(dbsrm)
         let e:SeqException=@AssertThrows[SeqException](defaultRangeSequence.nextValue())
-        @Assert(e.toString(),"SeqException: Retried too many times, retryTimes = 100")
+        @Assert(e.toString(),"SeqException: [DbSeqRangeMgr-nextRange] name is too long, max length = 32.")
         clearDown("range")
     }
 }

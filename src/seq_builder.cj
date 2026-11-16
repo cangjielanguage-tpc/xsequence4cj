@@ -13,6 +13,7 @@ public interface SeqBuilder {
      * 构建一个序列号生成器
      *
      * @return 序列号生成器
+     * @throws SeqException 构建失败时抛出
      */
     func build(): Sequence
 }

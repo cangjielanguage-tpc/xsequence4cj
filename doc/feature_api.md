@@ -159,10 +159,11 @@ DB 区间管理器
 public class DbSeqRangeMgr <: SeqRangeMgr {
 
     /**
-     * 获取指定区间名的下一个区间
+     * 获取指定业务名的下一个区间
      *
-     * 参数 name - 区间名
+     * 参数 name - 业务名，不能为空，长度不能超过 32 个 rune
      * 返回值 SeqRange - 返回区间
+     * @throws SeqException 业务名为空、超长、步长非法或数据库操作失败时抛出
      */
     public override func nextRange(name: String): SeqRange
 
@@ -170,23 +171,25 @@ public class DbSeqRangeMgr <: SeqRangeMgr {
      * 创建 DB 区间管理器，用在设置完一系列参数之后
      *
      * 返回值 Unit
+     * @throws SeqException 配置非法或数据库操作失败时抛出
      */
     public func create(): Unit
 
     /**
      * 获取区间步长，默认 1000
      *
-     * 返回值 Int64 - 区间步长
+     * 返回值 Int32 - 区间步长
      */
-    public func getStep(): Int64
+    public func getStep(): Int32
 
     /**
      * 设置区间步长，默认 1000
      *
      * 参数 step - 区间步长
      * 返回值 Unit
+     * @throws SeqException 配置已冻结（create() 之后不可修改）时抛出
      */
-    public func setStep(step: Int64): Unit
+    public func setStep(step: Int32): Unit
 
     /**
      * 获取区间起始位置，从 stepStart + 1 开始
@@ -200,23 +203,25 @@ public class DbSeqRangeMgr <: SeqRangeMgr {
      *
      * 参数 stepStart - 区间起始位置
      * 返回值 Unit
+     * @throws SeqException 配置已冻结（create() 之后不可修改）时抛出
      */
     public func setStepStart(stepStart: Int64): Unit
 
     /**
      * 获取区间失败重试次数，默认 100
      *
-     * 返回值 Int64 - 区间失败重试次数
+     * 返回值 Int32 - 区间失败重试次数
      */
-    public func getRetryTimes(): Int64
+    public func getRetryTimes(): Int32
 
     /**
      * 设置区间失败重试次数，默认 100
      *
      * 参数 retryTimes - 区间是被重试次数
      * 返回值 Unit 
+     * @throws SeqException 配置已冻结（create() 之后不可修改）时抛出
      */
-    public func setRetryTimes(retryTimes: Int64): Unit
+    public func setRetryTimes(retryTimes: Int32): Unit
 
     /**
      * 获取 DB 来源
@@ -230,6 +235,7 @@ public class DbSeqRangeMgr <: SeqRangeMgr {
      *
      * 参数 dataSource - DB 来源
      * 返回值 Unit
+     * @throws SeqException 配置已冻结（create() 之后不可修改）时抛出
      */
     public func setDataSource(dataSource: Datasource): Unit
 
@@ -243,12 +249,20 @@ public class DbSeqRangeMgr <: SeqRangeMgr {
     /**
      * 设置表名
      *
-     * 参数 tableName - 表名
-     * 返回值 Unit 
+     * 参数 tableName - 表名，设置时会校验长度为 1-53 个 rune；空值与字符白名单在 create() 时校验
+     * 返回值 Unit
+     * @throws SeqException 配置已冻结（create() 之后不可修改）或表名超长时抛出；表名为空或包含非法字符时由 create() 抛出
      */
     public func setTableName(tableName: String): Unit
 }
 ```
+
+说明：
+
+- `DbSeqRangeMgr` 内部会为表名追加固定前缀 `x_sequence_`，因此传入的 `tableName` 最长 53 个 rune，最终表名总长度不超过 64；长度在 `setTableName()` 时按 rune 校验，空值与字符白名单在 `create()` 建表时校验。
+- `create()` 成功后配置会被冻结；`setStep`、`setStepStart`、`setRetryTimes`、`setDataSource`、`setTableName` 再次调用会抛出 `SeqException`。
+- `create()` 建表期间不持有配置锁，读取配置不会被建表阻塞；`create()` 失败不会提交配置快照，也不会冻结配置。
+- `nextRange(name)` 的 `name` 不能为空，且长度不能超过 32 个 rune；`step` 必须大于 0，即使未调用 `create()` 也会在 `nextRange(name)` 入口校验；`name` 全程通过 `SqlVarchar` 参数绑定，不做字符集白名单。
 
 #### 1.2.3 class DefaultRangeSequence <: RangeSequence
 
@@ -307,7 +321,7 @@ public class DbSeqBuilder <: SeqBuilder {
     /**
      * 存放序列号步长的表，默认  x_sequence_sequence，可选
      *
-     * 参数 tableName - 表名
+     * 参数 tableName - 表名，build() 时会校验长度为 1-53 个 rune，建表时会校验字符白名单
      * 返回值 DbSeqBuilder- 序列号生成器构建者
      */
     public func tableName(tableName: String): DbSeqBuilder 
@@ -318,7 +332,7 @@ public class DbSeqBuilder <: SeqBuilder {
      * 参数 retryTimes - 失败重试的次数
      * 返回值 DbSeqBuilder - 序列号生成器的构建者
      */
-    public func retryTimes(retryTimes: Int64): DbSeqBuilder
+    public func retryTimes(retryTimes: Int32): DbSeqBuilder
 
     /**
      * 设置步长，默认 1000，可选
@@ -326,12 +340,12 @@ public class DbSeqBuilder <: SeqBuilder {
      * 参数 step - 步长
      * 返回值 DbSeqBuilder - 序列号生成器的构建者
      */
-    public func step(step: Int64): DbSeqBuilder
+    public func step(step: Int32): DbSeqBuilder
 
     /**
      * 业务名称，默认空字符串，必选，必选
      *
-     * 参数 bizName - 业务名称
+     * 参数 bizName - 业务名称，不能为空，长度不能超过 32 个 rune
      * 返回值 DbSeqBuilder - 序列号生成器的构建者
      */
     public func bizName(bizName: String): DbSeqBuilder
@@ -348,10 +362,17 @@ public class DbSeqBuilder <: SeqBuilder {
      * 序列号生成器的构建者建立，用在设置参数之后
      *
      * 返回值 Sequence - 序列号生成器
+     * @throws SeqException 配置非法或数据库操作失败时抛出
      */
     public override func build(): Sequence 
 }
 ```
+
+说明：
+
+- `build()` 会创建表并冻结配置。
+- `tableName` 传入后会追加 `x_sequence_` 前缀，因此有效长度为 1-53 个 rune，且仅允许 ASCII 字母、数字或下划线；长度在 `build()` 时校验，字符白名单在建表时校验。
+- `bizName` 会在取号时按 32 个 rune 的上限校验。
 
 ## 2 示例
 

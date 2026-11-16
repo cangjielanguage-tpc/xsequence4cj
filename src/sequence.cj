@@ -12,6 +12,7 @@ public interface Sequence {
      * 生成下一个序列号
      *
      * @return 序列号
+     * @throws SeqException 序列号生成失败时抛出
      */
     func nextValue(): Int64
 }
