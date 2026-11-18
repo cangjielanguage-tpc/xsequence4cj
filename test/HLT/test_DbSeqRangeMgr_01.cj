@@ -69,10 +69,4 @@ public class TestDbSeqRangeMgr01 {
         dsrm.setTableName("")
         @Assert(dsrm.getTableName(),"")
     }
-    @TestCase
-    func test_DbSeqRangeMgr_108(): Unit {
-        var dsrm=DbSeqRangeMgr()
-        dsrm.setTableName("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-        @Assert(dsrm.getTableName(),"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-    }
 }

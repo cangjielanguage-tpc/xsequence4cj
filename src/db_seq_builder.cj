@@ -65,6 +65,12 @@ public class DbSeqBuilder <: SeqBuilder {
         return this
     }
 
+    /**
+     * 构建序列号生成器。
+     *
+     * @return 序列号生成器
+     * @throws SeqException 配置非法或数据库操作失败时抛出
+     */
     public override func build(): Sequence {
         //利用DB获取区间管理器
         let dbSeqRangeMgr = DbSeqRangeMgr()

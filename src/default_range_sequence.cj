@@ -91,6 +91,12 @@ public class DefaultRangeSequence <: RangeSequence {
     }
 
 
+    /**
+     * 生成下一个序列号。
+     *
+     * @return 下一个序列号
+     * @throws SeqException 区间管理器未配置、区间刷新失败或序列号溢出时抛出
+     */
     public override func nextValue(): Int64 {
         var nextValueOption: ?Int64 = None
         var refreshCount: Int64 = 0
@@ -114,11 +120,10 @@ public class DefaultRangeSequence <: RangeSequence {
                     }
                 } else {
                     refreshCount += 1
-                    if (refreshCount > MAX_RANGE_REFRESH_COUNT) {
-                        throw SeqException("${RANGE_REFRESH_RETRY_MESSAGE}, retryTimes = ${MAX_RANGE_REFRESH_COUNT}")
-                    }
-
                     try {
+                        if (refreshCount > MAX_RANGE_REFRESH_COUNT) {
+                            throw SeqException("${RANGE_REFRESH_RETRY_MESSAGE}, retryTimes = ${MAX_RANGE_REFRESH_COUNT}")
+                        }
                         let range = getValidRange(acquisition.seqRangeMgr.getOrThrow(), acquisition.name)
                         currentRange.store(Some(range))
                     } finally {
